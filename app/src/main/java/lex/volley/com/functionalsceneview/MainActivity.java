@@ -6,8 +6,10 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import com.esri.arcgisruntime.mapping.ArcGISScene;
 import com.esri.arcgisruntime.mapping.ArcGISTiledElevationSource;
@@ -15,7 +17,7 @@ import com.esri.arcgisruntime.mapping.Basemap;
 import com.esri.arcgisruntime.mapping.view.Camera;
 import com.esri.arcgisruntime.mapping.view.SceneView;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements AdapterView.OnItemClickListener {
     private SceneView sv;
     private DrawerLayout myDrawerLayout;
     private ListView myLeftDrawerList;
@@ -29,6 +31,7 @@ public class MainActivity extends AppCompatActivity {
     };
     private ActionBarDrawerToggle myToggle;
     String[] basemapNames;
+    ArcGISScene myScene;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -37,7 +40,7 @@ public class MainActivity extends AppCompatActivity {
         myLeftDrawerList = findViewById(R.id.left_drawer);
 
         myDrawerLayout.addDrawerListener(myToggle);
-
+        myScene = new ArcGISScene(Basemap.createImagery());
         sv = findViewById(R.id.map1);
         ArcGISScene myScene = new ArcGISScene(Basemap.createImagery());
         sv.setScene(myScene);
@@ -50,7 +53,7 @@ public class MainActivity extends AppCompatActivity {
         basemapNames = getResources().getStringArray(R.array.basemaps);
         myLeftDrawerList.setAdapter(new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1,
                 basemapNames));
-
+        myLeftDrawerList.setOnItemClickListener(this);
         this.getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         configureToggle();
 
@@ -89,4 +92,23 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+    @Override
+    public void onItemClick(AdapterView<?> parent, View view, int i, long id) {
+        switch (i) {
+            case 0:
+                myScene.setBasemap(Basemap.createStreets());
+                break;
+            case 1:
+                myScene.setBasemap(Basemap.createImagery());
+                break;
+            case 2:
+                myScene.setBasemap(Basemap.createTopographic());
+                break;
+            case 3:
+                myScene.setBasemap(Basemap.createOpenStreetMap());
+                break;
+        }
+        Toast.makeText(getApplicationContext(), "This basemap is selected as: " + basemapNames[i],
+                Toast.LENGTH_LONG).show();
+    }
 }
