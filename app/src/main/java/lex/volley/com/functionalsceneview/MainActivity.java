@@ -5,6 +5,7 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
@@ -37,11 +38,24 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     String[] basemapNames;
     ArcGISScene myScene;
     Viewpoint homeViewpoint;
+    private ListView cityList;
+    private ArrayAdapter myAdapter;
+    boolean myFlag;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        cityList = findViewById (R.id.listview);
+        myAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, cities);
+        cityList.setAdapter(myAdapter);
+
+        cityList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                Toast.makeText(getApplicationContext(), cities[i],Toast.LENGTH_SHORT).show();
+            }
+        });
         myDrawerLayout = findViewById(R.id.drawer_layout);
         myLeftDrawerList = findViewById(R.id.left_drawer);
         FloatingActionButton fab = findViewById(R.id.fab);
@@ -55,6 +69,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         myDrawerLayout.addDrawerListener(myToggle);
         myScene = new ArcGISScene(Basemap.createImagery());
 
+        cityList.setVisibility(View.GONE);
 
 
         sv = findViewById(R.id.map1);
@@ -92,10 +107,6 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         sv.resume();
     }
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        return (myToggle.onOptionsItemSelected(item)) || super.onOptionsItemSelected(item);
-    }
 
     private void configureToggle() {
         myToggle = new ActionBarDrawerToggle(this, myDrawerLayout, R.string.open, R.string.close) {
@@ -132,5 +143,33 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         }
         Toast.makeText(getApplicationContext(), "This basemap is selected as: " + basemapNames[i],
                 Toast.LENGTH_LONG).show();
+        myDrawerLayout.closeDrawers();
+        cityList.setVisibility(View.GONE);
+        myFlag = false;
+    }
+
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()){
+            case R.id.bookmarks1:
+                if (myFlag) {
+                    cityList.setVisibility(View.GONE);
+                    myFlag = false;
+                }else {
+                    cityList.setVisibility(View.VISIBLE);
+                    myFlag = true;
+                }
+                return true;
+            default:
+                return (myToggle.onOptionsItemSelected(item)) || super.onOptionsItemSelected(item);
+        }
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+// Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.main, menu);
+        return true;
     }
 }
