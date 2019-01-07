@@ -1,0 +1,13 @@
+<resources>
+    <string name="app_name">Functional SceneView</string>
+    <string
+        name="elevation3dUrl">"http://elevation3d.arcgis.com/arcgis/rest/services/WorldElevation3D/Terrain3D/ImageServer"</string>
+    <string name="open">Open drawer</string>
+    <string name="close">Close drawer</string>
+    <string-array name="basemaps">
+        <item>Streets Map</item>
+        <item>Satelite Map</item>
+        <item>Topographic Map</item>
+        <item>Open Streets Map</item>
+    </string-array>
+</resources>
